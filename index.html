@@ -5,8 +5,12 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<style>
-			body { margin: 0; }
-			canvas { display: block; }
+			body {
+				margin: 0;
+			}
+			canvas {
+				display: block;
+			}
 			#form {
 				position: absolute;
 				width: 200px;
@@ -38,7 +42,7 @@
 		</div>
 		<script type="module">
 			import * as THREE from './three.js-master/build/three.module.js';
-			import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
+			import { TrackballControls } from './three.js-master/examples/jsm/controls/TrackballControls.js';
 
 			const axis = {
 				right: new THREE.Vector3(-1, 0, 0),
@@ -89,15 +93,17 @@
 
 			function init() {
 				scene = new THREE.Scene();
-				camera = new THREE.PerspectiveCamera(longest * 10, window.innerWidth / window.innerHeight, 0.1, 1000);
+				camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+				camera.position.x = camera.position.y = camera.position.z = Math.sqrt((longest * 4) * 3);
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize(window.innerWidth, window.innerHeight);
 				document.body.appendChild(renderer.domElement);
 
-				controls = new OrbitControls(camera, renderer.domElement);
-				controls.minDistance = 10;
-				controls.maxDistance = 10;
+				controls = new TrackballControls(camera, renderer.domElement);
+				controls.noPan = true;
+				controls.noZoom = true;
+				controls.rotateSpeed = 5;
 
 				let mat = new THREE.MeshBasicMaterial({ vertexColors: true });
 				let transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
@@ -137,18 +143,20 @@
 				for (let x = min.x; x <= max.x; x++) {
 					for (let y = min.y; y <= max.y; y++) {
 						for (let z = min.z; z <= max.z; z++) {
-							let box = new THREE.BoxGeometry();
-							for (let i = 0; i < box.faces.length; i++) {
-								box.faces[i].color.set(colors[Math.floor(i/2)]);
-							}
-							let cube = new THREE.Mesh(box, mat);
-						
-							cube.position.x = x;
-							cube.position.y = y;
-							cube.position.z = z;
+							if(x == min.x || x == max.x || y == min.y || y == max.y || z == min.z || z == max.z){
+								let box = new THREE.BoxGeometry();
+								for (let i = 0; i < box.faces.length; i++) {
+									box.faces[i].color.set(colors[Math.floor(i/2)]);
+								}
+								let cube = new THREE.Mesh(box, mat);
+							
+								cube.position.x = x;
+								cube.position.y = y;
+								cube.position.z = z;
 
-							scene.add(cube);
-							cubes[i++] = cube;
+								scene.add(cube);
+								cubes[i++] = cube;
+							}
 						}
 					}
 				}
@@ -156,8 +164,8 @@
 
 			function animate() {
 				requestAnimationFrame(animate);
-				controls.update();
 				executeQueue();
+				controls.update();
 				renderer.render(scene, camera);
 			}
 
@@ -334,9 +342,9 @@
 			document.getElementById('btn-last').addEventListener('click', last);
 
 			renderer.domElement.onkeydown = function (e) {
-				let key = event.key.toUpperCase();
+				let key = e.key.toUpperCase();
 				if('LRUDFBMESXYZ'.includes(key)) {
-					press(key + acutalIndice + (event.shiftKey ? '\'' : (event.ctrlKey ? '2' : '')));
+					press(key + acutalIndice + (e.shiftKey ? '\'' : (e.ctrlKey ? '2' : '')));
 				} else if('123456789'.includes(key)) {
 					acutalIndice = toIndice(key);
 				} else if(key == ' ') {
@@ -345,7 +353,16 @@
 					press('#2');
 				}
 				return false;
-			}
+			};
+
+			window.onresize = function () {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize(window.innerWidth, window.innerHeight);
+
+				controls.handleResize();
+			};
 		</script>
 	</body>
 </html>
