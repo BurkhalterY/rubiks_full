@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Rubik'S</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+			#form {
+				position: absolute;
+				width: 200px;
+				height: 200px;
+				top: 0;
+				right: 0;
+			}
+			#algorithm {
+				background-color: white;
+				white-space: pre-wrap;
+				white-space: -moz-pre-wrap;
+				white-space: -o-pre-wrap;
+				word-wrap: break-word;
+			}
+			#current {
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="form">
+			<input type="text" id="input">
+			<button id="btn-ok">O.K.</button>
+			<pre id="algorithm"></pre>
+			<button id="btn-first">&laquo;</button>
+			<button id="btn-prec">&lt;</button>
+			<button id="btn-next">&gt;</button>
+			<button id="btn-last">&raquo;</button>
+		</div>
+		<script type="module">
+			import * as THREE from './three.js-master/build/three.module.js';
+			import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
+
+			const axis = {
+				right: new THREE.Vector3(-1, 0, 0),
+				left: new THREE.Vector3(1, 0, 0),
+				up: new THREE.Vector3(0, -1, 0),
+				down: new THREE.Vector3(0, 1, 0),
+				front: new THREE.Vector3(0, 0, -1),
+				back: new THREE.Vector3(0, 0, 1)
+			};
+
+			const white = 0xffffff;
+			const red = 0xff0000;
+			const yellow = 0xffff00;
+			const orange = 0xff8800;
+			const green = 0x008800;
+			const blue = 0x0000ff;
+			const black = 0x000000;
+			const colors = [red, orange, white, yellow, green, blue];
+
+			const urlParams = new URLSearchParams(window.location.search);
+
+			const width = urlParams.has('width') ? urlParams.get('width') : 3;
+			const height = urlParams.has('height') ? urlParams.get('height') : width;
+			const depth = urlParams.has('depth') ? urlParams.get('depth') : width;
+			const longest = Math.max(width, height, depth);
+
+			const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
+			const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
+
+			const speed = 8;
+
+			var scene, camera, renderer, controls;
+
+			var algorithm = [];
+			var algorithmIndex = 0;
+			var algoReverse = true;
+
+			var keys = {};
+			var acutalIndice = '';
+
+			var cubes = [];
+
+			var queue = [];
+			var shots = [];
+
+			init();
+			animate();
+
+			function init() {
+				scene = new THREE.Scene();
+				camera = new THREE.PerspectiveCamera(longest * 10, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.domElement);
+
+				controls = new OrbitControls(camera, renderer.domElement);
+				controls.minDistance = 10;
+				controls.maxDistance = 10;
+
+				let mat = new THREE.MeshBasicMaterial({ vertexColors: true });
+				let transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+
+				for (let x = min.x; x <= max.x; x++) {
+					let box = new THREE.BoxGeometry(0.1, longest-0.5, longest-0.5);
+					let zone = new THREE.Mesh(box, transparentMat);
+
+					zone.position.x = x;
+
+					let key = toNotation(x, min.x, max.x, 'R', 'L', 'M');
+					keys[key] = { zones: [zone], axis: key.startsWith('R') ? axis.right : axis.left };
+					scene.add(zone);
+				}
+				for (let y = min.y; y <= max.y; y++) {
+					let box = new THREE.BoxGeometry(longest-0.5, 0.1, longest-0.5);
+					let zone = new THREE.Mesh(box, transparentMat);
+
+					zone.position.y = y;
+
+					let key = toNotation(y, min.y, max.y, 'U', 'D', 'E');
+					keys[key] = { zones: [zone], axis: key.startsWith('U') ? axis.up : axis.down };
+					scene.add(zone);
+				}
+				for (let z = min.z; z <= max.z; z++) {
+					let box = new THREE.BoxGeometry(longest-0.5, longest-0.5, 0.1);
+					let zone = new THREE.Mesh(box, transparentMat);
+
+					zone.position.z = z;
+
+					let key = toNotation(z, min.z, max.z, 'F', 'B', 'S');
+					keys[key] = { zones: [zone], axis: key.startsWith('B') ? axis.back : axis.front };
+					scene.add(zone);
+				}
+
+				let i = 0;
+				for (let x = min.x; x <= max.x; x++) {
+					for (let y = min.y; y <= max.y; y++) {
+						for (let z = min.z; z <= max.z; z++) {
+							let box = new THREE.BoxGeometry();
+							for (let i = 0; i < box.faces.length; i++) {
+								box.faces[i].color.set(colors[Math.floor(i/2)]);
+							}
+							let cube = new THREE.Mesh(box, mat);
+						
+							cube.position.x = x;
+							cube.position.y = y;
+							cube.position.z = z;
+
+							scene.add(cube);
+							cubes[i++] = cube;
+						}
+					}
+				}
+			}
+
+			function animate() {
+				requestAnimationFrame(animate);
+				controls.update();
+				executeQueue();
+				renderer.render(scene, camera);
+			}
+
+			function press(code, reverse = false) {
+				if(code[0] == '#'){
+					switch(code[1]){
+						case '1':
+							shots = [];
+							for (let i = 0; i < 40; i++) {
+								addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
+							}
+							break;
+						case '2':
+							if(shots.length > 0){
+								shot = shots.pop();
+								addToQueue(shot[0], -shot[1], false);
+							}
+							break;
+					}
+				} else {
+					let direction = 1;
+					if(code[code.length-1] == '\''){
+						direction = -1;
+						code = code.slice(0, -1);
+					} else if(code[code.length-1] == '2'){
+						direction = 2;
+						code = code.slice(0, -1);
+					}
+					if(reverse){
+						direction = -direction;
+					}
+					if(keys[code] !== undefined){
+						addToQueue(keys[code], direction);
+					}
+				}
+			}
+
+			function addToQueue(key, direction, save = true) {
+				let action = [];
+				for(let zone of key.zones) {
+					let group = new THREE.Group();
+					scene.add(group);
+					action.push({ zone: zone, direction: direction, axis: key.axis, i: 0, group: group });
+				}
+				if(save){
+					shots.push([key, direction]);
+				}
+				queue.unshift(action);
+			}
+
+			function executeQueue() {
+				if(queue.length > 0){
+					let action = queue[queue.length-1];
+					for(let singleAction of action) {
+
+						let group = singleAction.group;
+						if(group.children.length == 0){
+
+							for(let mesh of cubes) {
+								mesh.geometry.computeBoundingBox();
+								singleAction.zone.geometry.computeBoundingBox();
+								mesh.updateMatrixWorld();
+								singleAction.zone.updateMatrixWorld();
+
+								let box1 = mesh.geometry.boundingBox.clone();
+								box1.applyMatrix4(mesh.matrixWorld);
+
+								let box2 = singleAction.zone.geometry.boundingBox.clone();
+								box2.applyMatrix4(singleAction.zone.matrixWorld);
+
+								if(box2.intersectsBox(box1)){
+									group.attach(mesh);
+								}
+							}
+						}
+
+						group.rotateOnAxis(singleAction.axis, Math.PI/2 / speed* singleAction.direction);
+
+						if(++singleAction.i >= speed){
+							queue.pop();
+						}
+					}
+				}
+			}
+
+			function updateAlgorithm() {
+				let values = document.getElementById('input').value.split(' ');
+				algorithm = [];
+				for (let i = 0; i < values.length; i++) {
+					if(values[i].length >= 1){
+						let value = '';
+						if('LRUDFBMESXYZ'.includes(values[i][0])){
+							value = values[i][0];
+							for (let j = 1; j < values[i].length-1; j++) {
+								value += toIndice(values[i][j]);
+							}
+							if(values[i].length >= 2){
+								if('\'2'.includes(values[i][values[i].length-1])){
+									value += values[i][values[i].length-1];
+								}
+							}
+						}
+						algorithm.push(value);
+					}
+				}
+				document.getElementById('algorithm').innerHTML = algorithm.join(' ');
+				algorithmIndex = 0;
+				algoReverse = true
+			}
+
+			function first() {
+				for (let i = algorithmIndex; i >= 0; i--) {
+					executeCode(true);
+				}
+			}
+
+			function prec() {
+				executeCode(true);
+			}
+
+			function next() {
+				executeCode();
+			}
+
+			function last() {
+				for (let i = algorithmIndex; i < algorithm.length; i++) {
+					executeCode();
+				}
+			}
+
+			function executeCode(reverse = false) {
+				if(reverse && algorithmIndex > 0 || !reverse && algorithmIndex < algorithm.length-1 || algorithm.length == 1){
+					if(reverse == algoReverse){
+						algorithmIndex += reverse ? -1 : 1;
+						algorithmIndex = Math.min(Math.max(algorithmIndex, 0), algorithm.length-1);
+					}
+					press(algorithm[algorithmIndex], reverse, false);
+					let showAlgo = [...algorithm];
+					showAlgo[algorithmIndex] = '<span id="current">'+showAlgo[algorithmIndex]+'</span>';
+					document.getElementById('algorithm').innerHTML = showAlgo.join(' ');
+				}
+				algoReverse = reverse;
+			}
+
+			function toNotation(coord, min, max, charR, charL, charM) {
+				if(coord > 0){
+					return charR + toIndice(-min-coord+1);
+				} else if(coord < 0){
+					return charL + toIndice(max+coord+1);
+				} else {
+					return charM;
+				}
+			}
+
+			function toIndice(number) {
+				number += '';
+				for (let i = 0; i <= 9; i++) {
+					number = number.replaceAll(i, '₀₁₂₃₄₅₆₇₈₉'[i]);
+				}
+				if(number == '₁'){
+					number = '';
+				}
+				return number;
+			}
+
+			Array.prototype.sample = function(){
+				return this[Math.floor(Math.random() * this.length)];
+			}
+
+			document.getElementById('btn-ok').addEventListener('click', updateAlgorithm);
+			document.getElementById('btn-first').addEventListener('click', first);
+			document.getElementById('btn-prec').addEventListener('click', prec);
+			document.getElementById('btn-next').addEventListener('click', next);
+			document.getElementById('btn-last').addEventListener('click', last);
+
+			renderer.domElement.onkeydown = function (e) {
+				let key = event.key.toUpperCase();
+				if('LRUDFBMESXYZ'.includes(key)) {
+					press(key + acutalIndice + (event.shiftKey ? '\'' : (event.ctrlKey ? '2' : '')));
+				} else if('123456789'.includes(key)) {
+					acutalIndice = toIndice(key);
+				} else if(key == ' ') {
+					press('#1');
+				} else if(key == 'BACKSPACE') {
+					press('#2');
+				}
+				return false;
+			}
+		</script>
+	</body>
+</html>
