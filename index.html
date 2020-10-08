@@ -62,7 +62,7 @@
 			const black = 0x000000;
 
 			const mat = new THREE.MeshBasicMaterial({ vertexColors: true });
-			const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+			const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 
 			const urlParams = new URLSearchParams(window.location.search);
 
@@ -293,7 +293,7 @@
 					switch(code[1]){
 						case '1':
 							shots = [];
-							for (let i = 0; i < 1/*40*/; i++) {
+							for (let i = 0; i < 40; i++) {
 								addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
 							}
 							break;
