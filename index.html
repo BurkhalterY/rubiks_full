@@ -60,17 +60,32 @@
 			const green = 0x008800;
 			const blue = 0x0000ff;
 			const black = 0x000000;
+			const grey = 0x999999;
+
+			const loader = new THREE.TextureLoader();
+			const whiteMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/white.png')});
+			const redMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/red.png')});
+			const yellowMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/yellow.png')});
+			const orangeMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/orange.png')});
+			const greenMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/green.png')});
+			const blueMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/blue.png')});
+			const blackMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/black.png')});
+			const greyMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/grey.png')});
 
 			const mat = new THREE.MeshBasicMaterial({ vertexColors: true });
 			const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 
 			const urlParams = new URLSearchParams(window.location.search);
 
+			const embed = urlParams.has('embed');
+
 			const width = urlParams.has('width') ? urlParams.get('width') : 3;
 			const height = urlParams.has('height') ? urlParams.get('height') : width;
 			const depth = urlParams.has('depth') ? urlParams.get('depth') : width;
 			const longest = Math.max(width, height, depth);
 			const type = urlParams.has('type') ? urlParams.get('type') : 'cube';
+
+			var colors = {};
 
 			const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 			const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
@@ -98,7 +113,7 @@
 			function init() {
 				scene = new THREE.Scene();
 				camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-				camera.position.copy(new THREE.Vector3(longest * 3, longest * 3, longest * 3));
+				camera.position.copy(new THREE.Vector3(longest * 2, longest * 2, longest * 2));
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize(window.innerWidth, window.innerHeight);
@@ -121,6 +136,43 @@
 			}
 
 			function generateCube() {
+
+				if(urlParams.has('colors')){
+
+					colors = { 'U': [], 'R': [], 'F': [], 'L': [], 'B': [], 'D': [] };
+					let colors2 = JSON.parse(urlParams.get('colors'));
+
+					for (let face of 'URFLBD') {
+						if(colors2.hasOwnProperty(face)){
+							for (let i = 0; i < width * height; i++) {
+								if(colors2[face].hasOwnProperty(i)){
+									colors[face].push(colors2[face][i]);
+								} else {
+									colors[face].push('-');
+								}
+							}
+						} else {
+							for (let i = 0; i < width * height; i++) {
+								colors[face].push('-');
+							}
+						}
+					}
+				} else {
+					colors = {
+						'U': ['w'],
+						'R': ['r'],
+						'F': ['g'],
+						'L': ['o'],
+						'B': ['b'],
+						'D': ['y']
+					};
+					for (let face of 'URFLBD') {
+						for (let i = 1; i < width * height; i++) {
+							colors[face].push(colors[face][0]);
+						}
+					}
+				}
+
 				keys.X = { zones: [], axis: axis.right };
 				keys.Y = { zones: [], axis: axis.up };
 				keys.Z = { zones: [], axis: axis.front };
@@ -168,11 +220,14 @@
 						for (let z = min.z; z <= max.z; z++) {
 							if(x == min.x || x == max.x || y == min.y || y == max.y || z == min.z || z == max.z){
 								let box = new THREE.BoxGeometry();
-								for (let j = 0; j < box.faces.length; j++) {
-									box.faces[j].color.set(getColor(Math.floor(j/2), x, y, z));
+								let materials = [];
+								//for (let j = 0; j < box.faces.length; j++) {
+								for (let j = 0; j < 6; j++) {
+									//box.faces[j].color.set(getColor(Math.floor(j/2), x, y, z));
+									materials.push(getColor(Math.floor(j), x, y, z));
 								}
 
-								let cube = new THREE.Mesh(box, mat);
+								let cube = new THREE.Mesh(box, materials);
 							
 								cube.position.copy(new THREE.Vector3(x, y, z));
 
@@ -452,27 +507,54 @@
 				return number;
 			}
 
+			function toColorCode(letter) {
+				switch(letter) {
+					case 'w':
+						return whiteMat;
+					case 'r':
+						return redMat;
+					case 'y':
+						return yellowMat;
+					case 'o':
+						return orangeMat;
+					case 'g':
+						return greenMat;
+					case 'b':
+						return blueMat;
+					case '_':
+						return blackMat;
+					case '-':
+						return greyMat;
+					default:
+						return blackMat
+				}
+			}
+
 			function getColor(face, x, y, z) {
+
+				let a = x, b = y;
+				let i = '-';
+
 				if(face == 0 && x == max.x){
-					return red;
-				}
-				else if(face == 1 && x == min.x){
-					return orange;
-				}
-				else if(face == 2 && y == max.y){
-					return white;
-				}
-				else if(face == 3 && y == min.y){
-					return yellow;
-				}
-				else if(face == 4 && z == max.z){
-					return green;
-				}
-				else if(face == 5 && z == min.z){
-					return blue;
+					i = 'R';
+					a = z;
+				} else if(face == 1 && x == min.x){
+					i = 'L';
+					a = z;
+				} else if(face == 2 && y == max.y){
+					i = 'U';
+					b = z;
+				} else if(face == 3 && y == min.y){
+					i = 'D';
+					b = z;
+				} else if(face == 4 && z == max.z){
+					i = 'F';
+				} else if(face == 5 && z == min.z){
+					i = 'B';
 				} else {
-					return black;
+					return toColorCode('');
 				}
+				return toColorCode(colors[i][(a + max.x) + (b + max.y) * width]);
 			}
 
 			function getColorTetrahedron(face) {
@@ -519,29 +601,34 @@
 			document.getElementById('btn-next').addEventListener('click', next);
 			document.getElementById('btn-last').addEventListener('click', last);
 
-			document.getElementById('form').onkeydown = function (e) {
-				keysActive = false;
-			}
+			if(embed){
+				document.getElementById('form').style.display = 'none';
+			} else {
 
-			document.getElementById('input').onblur = function (e) {
-				keysActive = true;
-			}
-
-			document.body.onkeydown = function (e) {
-				if(keysActive){
-					let key = e.key.toUpperCase();
-					if('LRUDFBMESXYZ'.includes(key)) {
-						press(key + acutalIndice + (e.shiftKey ? '\'' : (e.ctrlKey ? '2' : '')));
-					} else if('123456789'.includes(key)) {
-						acutalIndice = toIndice(key);
-					} else if(key == ' ') {
-						press('#1');
-					} else if(key == 'BACKSPACE') {
-						press('#2');
-					}
-					return false;
+				document.getElementById('form').onkeydown = function (e) {
+					keysActive = false;
 				}
-			};
+
+				document.getElementById('input').onblur = function (e) {
+					keysActive = true;
+				}
+
+				document.body.onkeydown = function (e) {
+					if(keysActive){
+						let key = e.key.toUpperCase();
+						if('LRUDFBMESXYZ'.includes(key)) {
+							press(key + acutalIndice + (e.shiftKey ? '\'' : (e.ctrlKey ? '2' : '')));
+						} else if('123456789'.includes(key)) {
+							acutalIndice = toIndice(key);
+						} else if(key == ' ') {
+							press('#1');
+						} else if(key == 'BACKSPACE') {
+							press('#2');
+						}
+						return false;
+					}
+				};
+			}
 
 			window.onresize = function () {
 				camera.aspect = window.innerWidth / window.innerHeight;
