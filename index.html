@@ -532,21 +532,22 @@
 
 			function getColor(face, x, y, z) {
 
-				let a = x, b = y;
+				let a = x + max.x
+				let b = y + max.y;
 				let i = '-';
 
 				if(face == 0 && x == max.x){
 					i = 'R';
-					a = z;
+					a = z + max.z;
 				} else if(face == 1 && x == min.x){
 					i = 'L';
-					a = z;
+					a = z + max.z;
 				} else if(face == 2 && y == max.y){
 					i = 'U';
-					b = z;
+					b = z + max.z;
 				} else if(face == 3 && y == min.y){
 					i = 'D';
-					b = z;
+					b = z + max.z;
 				} else if(face == 4 && z == max.z){
 					i = 'F';
 				} else if(face == 5 && z == min.z){
@@ -554,7 +555,7 @@
 				} else {
 					return toColorCode('');
 				}
-				return toColorCode(colors[i][(a + max.x) + (b + max.y) * width]);
+				return toColorCode(colors[i][a + (height - b - 1) * width]);
 			}
 
 			function getColorTetrahedron(face) {
