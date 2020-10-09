@@ -73,7 +73,7 @@
 			const greyMat = new THREE.MeshBasicMaterial({map: loader.load('./textures/grey.png')});
 
 			const mat = new THREE.MeshBasicMaterial({ vertexColors: true });
-			const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+			const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 
 			const urlParams = new URLSearchParams(window.location.search);
 
@@ -128,9 +128,6 @@
 				switch(type) {
 					case 'cube':
 						generateCube();
-						break;
-					case 'pyraminx':
-						generatePyraminx();
 						break;
 				}
 			}
@@ -241,148 +238,6 @@
 				}
 			}
 
-			function generatePyraminx() {
-				let h = 4/3;
-				let a = 4/Math.sqrt(6);
-				let l = Math.sqrt(2);
-				let r = a / 2 * Math.sqrt(2);
-
-				let avg = new THREE.Vector3();
-				let nb = 0;
-
-				//keys.X = { zones: [], axis: axis.right };
-				//keys.Y = { zones: [], axis: axis.up };
-				//keys.Z = { zones: [], axis: axis.front };
-
-				let i = 0;
-				for (let y = max.y; y >= min.y; y--) {
-					for (let x = max.x; x >= y; x--) {
-						for (let z = max.z; z >= x; z--) {
-							let box = new THREE.TetrahedronGeometry();
-							box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, -1).normalize(), Math.atan(Math.sqrt(2))));
-							box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), Math.PI/4));
-
-							for (let j = 0; j < box.faces.length; j++) {
-								box.faces[j].color.set(/*getColorTetrahedron(j, x, y, z)*/Math.random()*0xffffff);
-							}
-
-							let cube = new THREE.Mesh(box, mat);
-
-							cube.position.y = y * h;
-							cube.position.x = (x - (max.x + y * h)/2) * l;
-							cube.position.z = (z - (max.z + x)/2) * a;
-
-							avg.add(cube.position);
-							nb++;
-
-							scene.add(cube);
-							cubes[i++] = cube;
-						}
-					}
-				}
-
-				/*for (let y = max.y; y >= min.y + 1; y--) {
-					for (let x = max.x; x >= y; x--) {
-						for (let z = max.z; z >= x; z--) {
-							let box = new THREE.OctahedronGeometry(r);
-							box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, -1).normalize(), Math.atan(Math.sqrt(2))));
-							box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), Math.PI/4));
-							
-							let cube = new THREE.Mesh(box, mat);
-
-							cube.position.y = y * h - 1;
-							cube.position.x = (x - (max.x + y * h)/2) * l;
-							cube.position.z = (z - (max.z + x)/2) * a;
-
-							scene.add(cube);
-							cubes[i++] = cube;
-						}
-					}
-				}*/
-
-				avg.divideScalar(nb);
-
-				let box = new THREE.TetrahedronGeometry(r*longest);
-				box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, -1).normalize(), Math.atan(Math.sqrt(2))));
-				box.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), Math.PI/4));
-				let full = new THREE.Mesh(box, transparentMat);
-				full.position.copy(avg);
-
-
-				for (let i = 0; i < 4; i++) {
-
-					let center = new THREE.Vector3();
-					center.copy(avg);
-
-					for(let j = 0; j < 4; j++) {
-						if(j != i) {
-							center.add(box.vertices[j]);
-						}
-					}
-
-					let normal = new THREE.Vector3();
-					normal.copy(box.vertices[i]);
-					normal.normalize();
-
-					for (let j = 0; j < longest; j++) {
-						let lambda = j / longest;
-
-						let box1 = new THREE.PlaneGeometry(longest * a, longest * a);
-						/*for (let k = 0; k < box1.faces.length; k++) {
-							box1.faces[k].normal = normal;
-						}*/
-						box1.lookAt(normal);
-						let zone = new THREE.Mesh(box1, transparentMat);
-
-						zone.position.x = center.x + (box.vertices[i].x) * lambda;
-						zone.position.y = center.y + (box.vertices[i].y) * lambda;
-						zone.position.z = center.z + (box.vertices[i].z) * lambda;
-
-						keys['a'+Math.round(Math.random()*9999)] = { zones: [zone], axis: normal };
-
-						scene.add(zone);
-					}
-				}
-
-				/*let pos = [];
-
-				for (let j = 0; j < box.faces.length; j++) {
-					let box2 = new THREE.BoxGeometry(0.1, 0.1, a * longest);
-					//let box2 = new THREE.BoxGeometry(a * longest, a * longest, 0.1);
-					box2.lookAt(box.faces[j].normal);
-					let zone = new THREE.Mesh(box2, mat);
-
-					zone.position.copy(full.position);
-
-					//let key = toNotation(x, min.x, max.x, 'R', 'L', 'M');
-					//keys['a'+Math.round(Math.random()*1000)] = { zones: [zone], axis: box2.faces[j].normal };
-					
-					//keys.X.zones.push(zone);
-
-					let box3 = new THREE.BoxGeometry(0.1, 0.1, a * longest);
-					box3.lookAt(box.faces[j].normal);
-					box3.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), Math.PI/2));
-					box3.applyMatrix4(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0).normalize(), Math.PI/2));
-
-					let zone2 = new THREE.Mesh(box3, mat);
-					zone2.position.copy(full.position);
-					scene.add(zone2);
-
-					pos.push({ zones: [zone], axis: box2.faces[j].normal });
-
-					scene.add(zone);
-				}
-				keys['U'] = pos[0];
-				keys['D'] = pos[1];
-				keys['L'] = pos[2];
-				keys['R'] = pos[3];*/
-
-				console.log(keys);
-
-				var axesHelper = new THREE.AxesHelper( 5 );
-				scene.add( axesHelper );
-			}
-
 			function animate() {
 				requestAnimationFrame(animate);
 				executeQueue();
@@ -395,8 +250,10 @@
 					switch(code[1]){
 						case '1':
 							shots = [];
-							for (let i = 0; i < /*40*/1; i++) {
-								addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
+							if(keys.length > 0){
+								for (let i = 0; i < 40; i++) {
+									addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
+								}
 							}
 							break;
 						case '2':
@@ -465,7 +322,7 @@
 							}
 						}
 
-						group.rotateOnAxis(singleAction.axis, Math.PI/(type == 'pyraminx' ? 1.5 : 2) / speed * singleAction.direction);
+						group.rotateOnAxis(singleAction.axis, Math.PI/2 / speed * singleAction.direction);
 
 						if(++singleAction.i >= speed){
 							queue.pop();
@@ -603,40 +460,6 @@
 					return toColorCode('');
 				}
 				return toColorCode(colors[i][a + (height - b - 1) * width]);
-			}
-
-			function getColorTetrahedron(face) {
-				if(face == 0){
-					return green;
-				}
-				else if(face == 1){
-					return red;
-				}
-				else if(face == 2){
-					return blue;
-				}
-				else if(face == 3){
-					return yellow;
-				} else {
-					return black;
-				}
-			}
-
-			function getColorOctahedron(face) {
-				if(face == 1){
-					return blue;
-				}
-				else if(face == 3){
-					return red;
-				}
-				else if(face == 5){
-					return yellow;
-				}
-				else if(face == 7){
-					return green;
-				} else {
-					return black;
-				}
 			}
 
 			Array.prototype.sample = function(){
