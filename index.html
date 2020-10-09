@@ -178,43 +178,33 @@
 				keys.Y = { zones: [], axis: axis.up };
 				keys.Z = { zones: [], axis: axis.front };
 
-				for (let x = min.x; x <= max.x; x++) {
-					let box = new THREE.PlaneGeometry(longest, longest);
-					box.rotateY(Math.PI/2);
-					let zone = new THREE.Mesh(box, transparentMat);
+				let xCoords = [];
+				let yCoords = [];
+				let zCoords = [];
 
-					zone.position.x = x;
+				for (let x = min.x; x <= max.x; x++) {
+					let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
 
 					let key = toNotation(x, min.x, max.x, 'R', 'L', 'M');
+					xCoords.push([x, zone]);
 					keys[key] = { zones: [zone], axis: key.startsWith('R') ? axis.right : axis.left };
 					keys.X.zones.push(zone);
-
-					scene.add(zone);
 				}
 				for (let y = min.y; y <= max.y; y++) {
-					let box = new THREE.PlaneGeometry(longest, longest);
-					box.rotateX(Math.PI/2);
-					let zone = new THREE.Mesh(box, transparentMat);
-
-					zone.position.y = y;
+					let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
 
 					let key = toNotation(y, min.y, max.y, 'U', 'D', 'E');
+					yCoords.push([y, zone]);
 					keys[key] = { zones: [zone], axis: key.startsWith('U') ? axis.up : axis.down };
 					keys.Y.zones.push(zone);
-
-					scene.add(zone);
 				}
 				for (let z = min.z; z <= max.z; z++) {
-					let box = new THREE.PlaneGeometry(longest, longest);
-					let zone = new THREE.Mesh(box, transparentMat);
-
-					zone.position.z = z;
+					let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
 
 					let key = toNotation(z, min.z, max.z, 'F', 'B', 'S');
+					zCoords.push([z, zone]);
 					keys[key] = { zones: [zone], axis: key.startsWith('B') ? axis.back : axis.front };
 					keys.Z.zones.push(zone);
-
-					scene.add(zone);
 				}
 
 				let i = 0;
@@ -229,8 +219,24 @@
 								}
 
 								let cube = new THREE.Mesh(box, materials);
-							
+
 								cube.position.copy(new THREE.Vector3(x, y, z));
+
+								for(let j = 0; j < xCoords.length; j++){
+									if(xCoords[j][0] == x) {
+										xCoords[j][1].cubes.push(cube.position.clone());
+									}
+								}
+								for(let j = 0; j < yCoords.length; j++){
+									if(yCoords[j][0] == y) {
+										yCoords[j][1].cubes.push(cube.position.clone());
+									}
+								}
+								for(let j = 0; j < zCoords.length; j++){
+									if(zCoords[j][0] == z) {
+										zCoords[j][1].cubes.push(cube.position.clone());
+									}
+								}
 
 								scene.add(cube);
 								cubes[i++] = cube;
@@ -302,32 +308,34 @@
 					for(let singleAction of action) {
 
 						let group = singleAction.group;
-						group.position.copy(singleAction.zone.position);
+						group.position.copy(singleAction.zone.center);
 
 						if(group.children.length == 0){
 
-							for(let mesh of cubes) {
-								mesh.geometry.computeBoundingBox();
-								singleAction.zone.geometry.computeBoundingBox();
-								mesh.updateMatrixWorld();
-								singleAction.zone.updateMatrixWorld();
-
-								let box1 = mesh.geometry.boundingBox.clone();
-								box1.applyMatrix4(mesh.matrixWorld);
-
-								let box2 = singleAction.zone.geometry.boundingBox.clone();
-								box2.applyMatrix4(singleAction.zone.matrixWorld);
-
-								if(box2.intersectsBox(box1)){
-									group.attach(mesh);
+							for(let cube of cubes) {
+								for(let authorizedCube of singleAction.zone.cubes) {
+									let worldPosition = new THREE.Vector3();
+									cube.getWorldPosition(worldPosition);
+									if(worldPosition.distanceTo(authorizedCube) < 1e-10){
+										group.attach(cube);
+									}
 								}
 							}
 						}
 
-						group.rotateOnAxis(singleAction.axis, Math.PI/2 / speed * singleAction.direction);
+						group.rotateOnAxis(singleAction.axis, singleAction.zone.angle / speed * singleAction.direction);
 
 						if(++singleAction.i >= speed){
 							queue.pop();
+							for (let children of group.children) {
+								let worldPosition = new THREE.Vector3();
+								children.getWorldPosition(worldPosition);
+								let worldRotation = new THREE.Quaternion();
+								children.getWorldQuaternion(worldRotation);
+								children.parent = null;
+								children.position.copy(worldPosition);
+								children.quaternion.copy(worldRotation);
+							}
 						}
 					}
 				}
