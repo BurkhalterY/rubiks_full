@@ -13,9 +13,8 @@
 			}
 			#form {
 				position: absolute;
-				width: 200px;
-				height: 200px;
-				top: 0;
+				width: 100%;
+				bottom: 0;
 				right: 0;
 			}
 			#algorithm {
@@ -32,13 +31,15 @@
 	</head>
 	<body>
 		<div id="form">
-			<input type="text" id="input">
-			<button id="btn-ok">O.K.</button>
-			<pre id="algorithm"></pre>
+			<div id="form-hide">
+				<input type="text" id="input">
+				<button id="btn-ok">O.K.</button>
+			</div>
 			<button id="btn-first">&laquo;</button>
 			<button id="btn-prec">&lt;</button>
 			<button id="btn-next">&gt;</button>
 			<button id="btn-last">&raquo;</button>
+			<pre id="algorithm"></pre>
 		</div>
 		<script type="module">
 			import * as THREE from './three.js-master/build/three.module.js';
@@ -125,6 +126,8 @@
 				controls.noZoom = true;
 				controls.rotateSpeed = 5;*/
 
+				updateAlgorithm();
+
 				switch(type) {
 					case 'cube':
 						generateCube();
@@ -141,16 +144,9 @@
 
 					for (let face of 'URFLBD') {
 						if(colors2.hasOwnProperty(face)){
-							for (let i = 0; i < width * height; i++) {
-								if(colors2[face].hasOwnProperty(i)){
-									colors[face].push(colors2[face][i]);
-								} else {
-									colors[face].push('-');
-								}
-							}
-						} else {
-							for (let i = 0; i < width * height; i++) {
+							for (let i = 0; i < colors2[face].length; i++) {
 								colors[face].push('-');
+								colors[face][i] = colors2[face][i];
 							}
 						}
 					}
@@ -164,7 +160,14 @@
 						'D': ['y']
 					};
 					for (let face of 'URFLBD') {
-						for (let i = 1; i < width * height; i++) {
+						let l = width;
+						let L = height;
+						if('LR'.includes(face)){
+							l = depth;
+						} else if('UD'.includes(face)){
+							L = depth;
+						}
+						for (let i = 1; i < l * L; i++) {
 							colors[face].push(colors[face][0]);
 						}
 					}
@@ -250,7 +253,7 @@
 					switch(code[1]){
 						case '1':
 							shots = [];
-							if(keys.length > 0){
+							if(Object.values(keys).length > 0){
 								for (let i = 0; i < 40; i++) {
 									addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
 								}
@@ -332,7 +335,7 @@
 			}
 
 			function updateAlgorithm() {
-				let values = document.getElementById('input').value.split(' ');
+				let values = (urlParams.has('algo') ? urlParams.get('algo') : document.getElementById('input').value).split(' ');
 				algorithm = [];
 				for (let i = 0; i < values.length; i++) {
 					if(values[i].length >= 1){
@@ -438,20 +441,26 @@
 
 				let a = x + max.x
 				let b = y + max.y;
+				let l = width;
+				let L = height;
 				let i = '-';
 
 				if(face == 0 && x == max.x){
 					i = 'R';
 					a = z + max.z;
+					l = depth;
 				} else if(face == 1 && x == min.x){
 					i = 'L';
 					a = z + max.z;
+					l = depth;
 				} else if(face == 2 && y == max.y){
 					i = 'U';
 					b = z + max.z;
+					L = depth;
 				} else if(face == 3 && y == min.y){
 					i = 'D';
 					b = z + max.z;
+					L = depth;
 				} else if(face == 4 && z == max.z){
 					i = 'F';
 				} else if(face == 5 && z == min.z){
@@ -459,7 +468,7 @@
 				} else {
 					return toColorCode('');
 				}
-				return toColorCode(colors[i][a + (height - b - 1) * width]);
+				return toColorCode(colors[i][a + (L - b - 1) * l]);
 			}
 
 			Array.prototype.sample = function(){
@@ -473,7 +482,10 @@
 			document.getElementById('btn-last').addEventListener('click', last);
 
 			if(embed){
-				document.getElementById('form').style.display = 'none';
+				document.getElementById('form-hide').style.display = 'none';
+				if(!urlParams.has('algo')){
+					document.getElementById('form').style.display = 'none';
+				}
 			} else {
 
 				document.getElementById('form').onkeydown = function (e) {

@@ -5,11 +5,42 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	</head>
 	<body>
 		<div class="container">
-			<iframe src='..?embed&colors={"U": {"1": "w", "3": "w", "4": "w", "5": "w", "7": "w"}, "F": {"1": "g", "4": "g"}, "R": {"1": "r", "4": "r"}, "B": {"1": "b", "4": "b"}, "L": {"1": "o", "4": "o"}}' width="300" height="300" class="rounded-lg"></iframe>
-			<iframe src='..?embed&colors={"U": {"1": "w", "3": "w", "4": "w", "5": "w", "7": "w"}, "F": {"1": "g", "4": "g"}, "R": {"1": "r", "4": "r"}, "B": {"1": "b", "4": "b"}, "L": {"1": "o", "4": "o"}}' width="300" height="300" class="rounded-lg"></iframe>
+			<iframe src="../index.html?embed" data-colors="cross" width="300" height="300" class="rounded-lg"></iframe>
+			<iframe src="../index.html?embed" data-colors="coinD" data-algo="coinD" width="300" height="300" class="rounded-lg"></iframe>
 		</div>
+		<script>
+			let cubes = {};
+			cubes.cross = {
+				"colors": {
+					"U": "-w-www-w-",
+					"F": "-g--g----",
+					"R": "-r--r----",
+					"B": "-b--b----",
+					"L": "-o--o----"
+				}
+			};
+			cubes.coinD = {
+				"colors": {
+					"U": "-w-www-w-",
+					"F": "-g--g---w",
+					"R": "-r--r---r",
+					"B": "-b--b----",
+					"L": "-o--o----",
+					"D": "--g------"
+				},
+				"algo": "D' R' D R"
+			};
+
+			$('[data-colors]').each(function() {
+				$(this).attr('src', $(this).attr('src')+'&colors='+JSON.stringify(cubes[$(this).attr('data-colors')].colors));
+			});
+			$('[data-algo]').each(function() {
+				$(this).attr('src', $(this).attr('src')+'&algo='+cubes[$(this).attr('data-algo')].algo);
+			});
+		</script>
 	</body>
 </html>
