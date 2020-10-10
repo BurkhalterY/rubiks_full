@@ -1,7 +1,7 @@
-function press(code, reverse = false) {
-	if(code[0] == '#'){
-		switch(code[1]){
-			case '1':
+function press(code, direction, reverse = 1) {
+	if(code == '#'){
+		switch(direction){
+			case 1:
 				shots = [];
 				if(Object.values(keys).length > 0){
 					for (let i = 0; i < 40; i++) {
@@ -9,7 +9,7 @@ function press(code, reverse = false) {
 					}
 				}
 				break;
-			case '2':
+			case 2:
 				if(shots.length > 0){
 					let shot = shots.pop();
 					addToQueue(shot[0], -shot[1], false);
@@ -17,19 +17,8 @@ function press(code, reverse = false) {
 				break;
 		}
 	} else {
-		let direction = 1;
-		if(code[code.length-1] == '\''){
-			direction = -1;
-			code = code.slice(0, -1);
-		} else if(code[code.length-1] == '2'){
-			direction = 2;
-			code = code.slice(0, -1);
-		}
-		if(reverse){
-			direction = -direction;
-		}
 		if(keys[code] !== undefined){
-			addToQueue(keys[code], direction);
+			addToQueue(keys[code], direction * reverse);
 		}
 	}
 }
@@ -86,27 +75,26 @@ function executeQueue() {
 	}
 }
 
-function updateAlgorithm() {
-	let values = (urlParams.has('algo') ? urlParams.get('algo') : document.getElementById('input').value).split(' ');
+function updateAlgorithm(algo = null) {
+	let values = (typeof algo === 'string' ? algo : document.getElementById('input').value).split(' ');
 	algorithm = [];
+
 	for (let i = 0; i < values.length; i++) {
-		if(values[i].length >= 1){
-			let value = '';
-			if('LRUDFBMESXYZ'.includes(values[i][0])){
-				value = values[i][0];
-				for (let j = 1; j < values[i].length-1; j++) {
-					value += toIndice(values[i][j]);
-				}
-				if(values[i].length >= 2){
-					if('\'2'.includes(values[i][values[i].length-1])){
-						value += values[i][values[i].length-1];
-					}
-				}
-			}
-			algorithm.push(value);
+		let rotation = 1;
+		let shownValue = values[i];
+		if(values[i][values[i].length-1] == '\''){
+			rotation *= -1;
+			values[i] = values[i].slice(0, -1);
+		}
+		if(values[i][values[i].length-1] == '2'){
+			rotation *= 2;
+			values[i] = values[i].slice(0, -1);
+		}
+		if(Object.keys(keys).includes(values[i])){
+			algorithm.push([values[i], rotation, shownValue]);
 		}
 	}
-	document.getElementById('algorithm').innerHTML = algorithm.join(' ');
+	document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2]).join(' ');
 	algorithmIndex = 0;
 	algoReverse = true
 }
@@ -117,10 +105,8 @@ function executeCode(reverse = false) {
 			algorithmIndex += reverse ? -1 : 1;
 			algorithmIndex = Math.min(Math.max(algorithmIndex, 0), algorithm.length-1);
 		}
-		press(algorithm[algorithmIndex], reverse, false);
-		let showAlgo = [...algorithm];
-		showAlgo[algorithmIndex] = '<span id="current">'+showAlgo[algorithmIndex]+'</span>';
-		document.getElementById('algorithm').innerHTML = showAlgo.join(' ');
+		press(algorithm[algorithmIndex][0], algorithm[algorithmIndex][1], reverse ? -1 : 1);
+		document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2] == algorithm[algorithmIndex][2] ? '<span id="current">'+e[2]+'</span>' : e[2]).join(' ');
 	}
 	algoReverse = reverse;
 }

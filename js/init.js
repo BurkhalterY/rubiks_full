@@ -40,7 +40,26 @@ const materialsColors = {
 	'-': new THREE.MeshBasicMaterial({map: loader.load('./textures/-.png')})
 };
 
-var colors = {};
+var colors = {
+	'U': ['w'],
+	'R': ['r'],
+	'F': ['g'],
+	'L': ['o'],
+	'B': ['b'],
+	'D': ['y']
+};
+for (let face of 'URFLBD') {
+	let l = width;
+	let L = height;
+	if('LR'.includes(face)){
+		l = depth;
+	} else if('UD'.includes(face)){
+		L = depth;
+	}
+	for (let i = 1; i < l * L; i++) {
+		colors[face].push(colors[face][0]);
+	}
+}
 
 const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
@@ -76,11 +95,37 @@ function init() {
 	controls.enablePan = false;
 	controls.enableZoom = false;
 
-	updateAlgorithm();
+	switch(type) {
+		case 'cube':
+			generateCubeZones();
+			break;
+	}
+
+	if(urlParams.has('config')){
+		let path = urlParams.get('config').split(':');
+		$.ajax({ 
+			url: 'algorithms/'+path[0]+'.json', 
+			dataType: 'json', 
+			async: false, 
+			success: function(json){ 
+				colors = { 'U': [], 'R': [], 'F': [], 'L': [], 'B': [], 'D': [] };
+				let colors2 = json[path[1]].colors;
+
+				for (let face of 'URFLBD') {
+					for (let i = 0; i < colors2[face].length; i++) {
+						colors[face].push('-');
+						colors[face][i] = colors2[face][i];
+					}
+				}
+
+				updateAlgorithm(json[path[1]].algo);
+			} 
+		});
+	}
 
 	switch(type) {
 		case 'cube':
-			generateCube();
+			generateCubeCubies();
 			break;
 	}
 }

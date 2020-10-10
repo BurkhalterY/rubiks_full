@@ -30,9 +30,6 @@ document.getElementById('btn-last').addEventListener('click', last);
 
 if(embed){
 	document.getElementById('form-hide').style.display = 'none';
-	if(!urlParams.has('algo')){
-		document.getElementById('form').style.display = 'none';
-	}
 } else {
 
 	document.getElementById('form').onkeydown = function (e) {
@@ -47,13 +44,13 @@ if(embed){
 		if(keysActive){
 			let key = e.key.toUpperCase();
 			if('LRUDFBMESXYZ'.includes(key)) {
-				press(key + acutalIndice + (e.shiftKey ? '\'' : (e.ctrlKey ? '2' : '')));
+				press(key + acutalIndice, (e.ctrlKey ? 2 : 1) * (e.shiftKey ? -1 : 1));
 			} else if('123456789'.includes(key)) {
 				acutalIndice = toIndice(key);
 			} else if(key == ' ') {
-				press('#1');
+				press('#', 1);
 			} else if(key == 'BACKSPACE') {
-				press('#2');
+				press('#', 2);
 			}
 			return false;
 		}

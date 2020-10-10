@@ -9,38 +9,8 @@
 	</head>
 	<body>
 		<div class="container">
-			<iframe src="../index.html?embed" data-colors="cross" width="300" height="300" class="rounded-lg"></iframe>
-			<iframe src="../index.html?embed" data-colors="coinD" data-algo="coinD" width="300" height="300" class="rounded-lg"></iframe>
+			<iframe src="../index.html?embed&config=fridrich/f2l:1" width="300" height="300" class="rounded-lg"></iframe>
+			<iframe src="../index.html?embed&config=fridrich/f2l:1" width="300" height="300" class="rounded-lg"></iframe>
 		</div>
-		<script>
-			let cubes = {};
-			cubes.cross = {
-				"colors": {
-					"U": "-w-www-w-",
-					"F": "-g--g----",
-					"R": "-r--r----",
-					"B": "-b--b----",
-					"L": "-o--o----"
-				}
-			};
-			cubes.coinD = {
-				"colors": {
-					"U": "-w-www-w-",
-					"F": "-g--g---w",
-					"R": "-r--r---r",
-					"B": "-b--b----",
-					"L": "-o--o----",
-					"D": "--g------"
-				},
-				"algo": "D' R' D R"
-			};
-
-			$('[data-colors]').each(function() {
-				$(this).attr('src', $(this).attr('src')+'&colors='+JSON.stringify(cubes[$(this).attr('data-colors')].colors));
-			});
-			$('[data-algo]').each(function() {
-				$(this).attr('src', $(this).attr('src')+'&algo='+cubes[$(this).attr('data-algo')].algo);
-			});
-		</script>
 	</body>
 </html>
