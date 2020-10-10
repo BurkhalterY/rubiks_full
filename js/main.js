@@ -23,12 +23,12 @@ function press(code, direction, reverse = 1) {
 	}
 }
 
-function addToQueue(key, direction, save = true) {
+function addToQueue(key, direction, save = true, algoIndex = null) {
 	let action = [];
 	for(let zone of key.zones) {
 		let group = new THREE.Group();
 		scene.add(group);
-		action.push({ zone: zone, direction: direction, axis: key.axis, i: 0, group: group });
+		action.push({ zone: zone, direction: direction, axis: key.axis, algoIndex: algoIndex, i: 0, group: group });
 	}
 	if(save){
 		shots.push([key, direction]);
@@ -38,6 +38,7 @@ function addToQueue(key, direction, save = true) {
 
 function executeQueue() {
 	if(queue.length > 0){
+		let finish = false;
 		let action = queue[queue.length-1];
 		for(let singleAction of action) {
 
@@ -45,6 +46,10 @@ function executeQueue() {
 			group.position.copy(singleAction.zone.center);
 
 			if(group.children.length == 0){
+
+				if(singleAction.algoIndex !== null){
+					document.getElementById('algorithm').innerHTML = algorithm.map((e, i) => i == singleAction.algoIndex ? '<span id="current">'+e[2]+'</span>' : e[2]).join(' ');
+				}
 
 				for(let cube of cubes) {
 					for(let authorizedCube of singleAction.zone.cubes) {
@@ -60,7 +65,6 @@ function executeQueue() {
 			group.rotateOnAxis(singleAction.axis, singleAction.zone.angle / speed * singleAction.direction);
 
 			if(++singleAction.i >= speed){
-				queue.pop();
 				for (let children of group.children) {
 					let worldPosition = new THREE.Vector3();
 					children.getWorldPosition(worldPosition);
@@ -70,7 +74,12 @@ function executeQueue() {
 					children.position.copy(worldPosition);
 					children.quaternion.copy(worldRotation);
 				}
+				finish = true;
 			}
+		}
+		
+		if(finish){
+			queue.pop();
 		}
 	}
 }
@@ -96,19 +105,18 @@ function updateAlgorithm(algo = null) {
 	}
 	document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2]).join(' ');
 	algorithmIndex = 0;
-	algoReverse = true
 }
 
-function executeCode(reverse = false) {
-	if(reverse && algorithmIndex > 0 || !reverse && algorithmIndex < algorithm.length-1 || algorithm.length == 1){
-		if(reverse == algoReverse){
-			algorithmIndex += reverse ? -1 : 1;
-			algorithmIndex = Math.min(Math.max(algorithmIndex, 0), algorithm.length-1);
-		}
-		press(algorithm[algorithmIndex][0], algorithm[algorithmIndex][1], reverse ? -1 : 1);
-		document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2] == algorithm[algorithmIndex][2] ? '<span id="current">'+e[2]+'</span>' : e[2]).join(' ');
+function executeCode(reverse = 1) {
+	if(reverse == algoReverse){
+		algorithmIndex += reverse;
 	}
 	algoReverse = reverse;
+	if(algorithmIndex < 0 || algorithmIndex >= algorithm.length){
+		algorithmIndex = Math.min(Math.max(algorithmIndex, 0), algorithm.length-1);
+	} else {
+		addToQueue(keys[algorithm[algorithmIndex][0]], algorithm[algorithmIndex][1] * reverse, false, algorithmIndex);
+	}
 }
 
 function toNotation(coord, min, max, charR, charL, charM) {

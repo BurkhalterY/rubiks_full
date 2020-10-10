@@ -64,13 +64,13 @@ for (let face of 'URFLBD') {
 const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
 
-const speed = 8;
+const speed = 32;
 
 var scene, camera, renderer, controls;
 
 var algorithm = [];
 var algorithmIndex = 0;
-var algoReverse = true;
+var algoReverse = -1;
 
 var keys = {};
 var acutalIndice = '';

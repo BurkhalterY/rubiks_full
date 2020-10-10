@@ -1,11 +1,11 @@
 function first() {
-	for (let i = algorithmIndex; i >= 0; i--) {
-		executeCode(true);
+	for (let i = 0; i < algorithm.length; i++) {
+		executeCode(-1);
 	}
 }
 
 function prec() {
-	executeCode(true);
+	executeCode(-1);
 }
 
 function next() {
@@ -13,7 +13,7 @@ function next() {
 }
 
 function last() {
-	for (let i = algorithmIndex; i < algorithm.length; i++) {
+	for (let i = 0; i < algorithm.length; i++) {
 		executeCode();
 	}
 }
