@@ -23,6 +23,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('r')){
+						keys['r'] = { zones: [], axis: axis.right };
+					}
+
+					keys['r'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Rw')){
 					keys[i2+'Rw'] = { zones: [], axis: axis.right };
@@ -37,6 +43,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('l')){
+						keys['l'] = { zones: [], axis: axis.left };
+					}
+
+					keys['l'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Lw')){
 					keys[i2+'Lw'] = { zones: [], axis: axis.left };
@@ -62,6 +74,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('u')){
+						keys['u'] = { zones: [], axis: axis.up };
+					}
+
+					keys['u'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Uw')){
 					keys[i2+'Uw'] = { zones: [], axis: axis.up };
@@ -76,6 +94,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('d')){
+						keys['d'] = { zones: [], axis: axis.down };
+					}
+
+					keys['d'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Dw')){
 					keys[i2+'Dw'] = { zones: [], axis: axis.down };
@@ -98,6 +122,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('f')){
+						keys['f'] = { zones: [], axis: axis.front };
+					}
+
+					keys['f'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Fw')){
 					keys[i2+'Fw'] = { zones: [], axis: axis.front };
@@ -112,6 +142,12 @@ function generateCubeZones() {
 			if(i2 != 1){
 				if(i2 == 2){
 					i2 = '';
+
+					if(!keys.hasOwnProperty('b')){
+						keys['b'] = { zones: [], axis: axis.back };
+					}
+
+					keys['b'].zones.push(zone);
 				}
 				if(!keys.hasOwnProperty(i2+'Bw')){
 					keys[i2+'Bw'] = { zones: [], axis: axis.back };

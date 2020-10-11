@@ -89,6 +89,11 @@ function updateAlgorithm(algo = null) {
 	algorithm = [];
 
 	for (let i = 0; i < values.length; i++) {
+		if(values[i] == '(' || values[i] == ')'){
+			algorithm.push([values[i], 0, values[i]]);
+			continue;
+		}
+
 		let rotation = 1;
 		let shownValue = values[i];
 		if(values[i][values[i].length-1] == '\''){
@@ -103,8 +108,10 @@ function updateAlgorithm(algo = null) {
 			algorithm.push([values[i], rotation, shownValue]);
 		}
 	}
-	document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2]).join(' ');
+
+	document.getElementById('algorithm').innerHTML = algorithm.map((e, i) => e[2]).join(' ');
 	algorithmIndex = 0;
+	algoReverse = false;
 }
 
 function executeCode(reverse = 1) {
@@ -115,7 +122,11 @@ function executeCode(reverse = 1) {
 	if(algorithmIndex < 0 || algorithmIndex >= algorithm.length){
 		algorithmIndex = Math.min(Math.max(algorithmIndex, 0), algorithm.length-1);
 	} else {
-		addToQueue(keys[algorithm[algorithmIndex][0]], algorithm[algorithmIndex][1] * reverse, false, algorithmIndex);
+		if(algorithm[algorithmIndex][0] == '(' || algorithm[algorithmIndex][0] == ')'){
+			executeCode(reverse);
+		} else {
+			addToQueue(keys[algorithm[algorithmIndex][0]], algorithm[algorithmIndex][1] * reverse, false, algorithmIndex);
+		}
 	}
 }
 
