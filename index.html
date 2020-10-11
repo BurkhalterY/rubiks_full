@@ -12,11 +12,26 @@
 			canvas {
 				display: block;
 			}
-			#form {
+			#form, #edit {
 				position: absolute;
 				width: 100%;
 				bottom: 0;
 				right: 0;
+			}
+			#edit {
+				text-align: right;
+			}
+			#edit img {
+				width: 50px;
+				border: 2px solid transparent;
+				border-radius: 10%;
+			}
+			#edit img.selected {
+				border-color: white;
+			}
+			#colors {
+				width: 250px;
+				height: 125px;
 			}
 			#algorithm {
 				background-color: white;
@@ -27,6 +42,9 @@
 			}
 			#current {
 				color: red;
+			}
+			#edit {
+				display: none;
 			}
 		</style>
 	</head>
@@ -42,11 +60,22 @@
 			<button id="btn-last">&raquo;</button>
 			<pre id="algorithm"></pre>
 		</div>
+		<div id="edit">
+			<textarea id="colors"></textarea><br>
+			<img id="color-w" class="selected" onclick="changeColor('w');" src="textures/w.png" />
+			<img id="color-r" onclick="changeColor('r');" src="textures/r.png" />
+			<img id="color-y" onclick="changeColor('y');" src="textures/y.png" />
+			<img id="color-o" onclick="changeColor('o');" src="textures/o.png" />
+			<img id="color-g" onclick="changeColor('g');" src="textures/g.png" />
+			<img id="color-b" onclick="changeColor('b');" src="textures/b.png" />
+			<img id="color--" onclick="changeColor('-');" src="textures/-.png" />
+		</div>
 		<script src="three.js-master/build/three.min.js"></script>
 		<script src="three.js-master/examples/js/controls/OrbitControls.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/main.js"></script>
 		<script src="js/event.js"></script>
+		<script src="js/edit.js"></script>
 		<script src="js/shapes/cube.js"></script>
 		<script>
 			init();

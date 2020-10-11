@@ -205,13 +205,12 @@ function generateCubeCubies() {
 	}
 }
 
-function getColor(face, x, y, z) {
-
+function getColorIndex(face, x, y, z) {
 	let a = x + max.x
 	let b = y + max.y;
 	let l = width;
 	let L = height;
-	let i = '-';
+	let i = '';
 	let r = 0;
 
 	if(face == 0 && x == max.x){
@@ -238,7 +237,7 @@ function getColor(face, x, y, z) {
 		i = 'B';
 		r = 1;
 	} else {
-		return  materialsColors['_'];
+		return -1;
 	}
 	
 	if(r == 1){
@@ -247,11 +246,20 @@ function getColor(face, x, y, z) {
 		b = L - b - 1;
 	}
 
-	let color = colors[i][a + (L - b - 1) * l];
+	return [i, a, b, l, L];
+}
+
+function getColor(face, x, y, z) {
+	colorIndex = getColorIndex(face, x, y, z);
+
+	let color = '_';
+	if(colorIndex != -1){
+		color = colors[colorIndex[0]][colorIndex[1] + (colorIndex[4] - colorIndex[2] - 1) * colorIndex[3]];
+	}
 	if(urlParams.has('stickers')){
 		let material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./textures/'+urlParams.get('stickers')+'/'+color+'.png') });
-		material.map.repeat.set(1/l, 1/L);
-		material.map.offset.set(a/l, b/L);
+		material.map.repeat.set(1/colorIndex[3], 1/colorIndex[4]);
+		material.map.offset.set(colorIndex[1]/colorIndex[3], colorIndex[2]/colorIndex[4]);
 		return material;
 	} else {
 		return materialsColors[color];

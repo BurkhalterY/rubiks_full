@@ -21,6 +21,7 @@ const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity:
 
 const urlParams = new URLSearchParams(window.location.search);
 const embed = urlParams.has('embed');
+const edit = urlParams.has('edit');
 
 const width = urlParams.has('width') ? urlParams.get('width') : 3;
 const height = urlParams.has('height') ? urlParams.get('height') : width;
@@ -41,30 +42,18 @@ const materialsColors = {
 };
 
 var colors = {
-	'U': ['w'],
-	'R': ['r'],
-	'F': ['g'],
-	'L': ['o'],
-	'B': ['b'],
-	'D': ['y']
+	'U': 'w'.repeat(width*depth),
+	'R': 'r'.repeat(height*depth),
+	'F': 'g'.repeat(width*height),
+	'L': 'o'.repeat(height*depth),
+	'B': 'b'.repeat(width*height),
+	'D': 'y'.repeat(width*depth)
 };
-for (let face of 'URFLBD') {
-	let l = width;
-	let L = height;
-	if('LR'.includes(face)){
-		l = depth;
-	} else if('UD'.includes(face)){
-		L = depth;
-	}
-	for (let i = 1; i < l * L; i++) {
-		colors[face].push(colors[face][0]);
-	}
-}
 
 const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
 
-const speed = 32;
+const speed = 8;
 
 var scene, camera, renderer, controls;
 
@@ -108,16 +97,7 @@ function init() {
 			dataType: 'json', 
 			async: false, 
 			success: function(json){ 
-				colors = { 'U': [], 'R': [], 'F': [], 'L': [], 'B': [], 'D': [] };
-				let colors2 = json[path[1]].colors;
-
-				for (let face of 'URFLBD') {
-					for (let i = 0; i < colors2[face].length; i++) {
-						colors[face].push('-');
-						colors[face][i] = colors2[face][i];
-					}
-				}
-
+				colors = json[path[1]].colors;
 				updateAlgorithm(json[path[1]].algo);
 			} 
 		});
@@ -127,6 +107,10 @@ function init() {
 		case 'cube':
 			generateCubeCubies();
 			break;
+	}
+
+	if(edit){
+		initEdit();
 	}
 }
 

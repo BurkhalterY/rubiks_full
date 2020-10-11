@@ -22,6 +22,10 @@ Array.prototype.sample = function(){
 	return this[Math.floor(Math.random() * this.length)];
 }
 
+String.prototype.replaceAt = function(index, replacement) {
+	return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+}
+
 document.getElementById('btn-ok').addEventListener('click', updateAlgorithm);
 document.getElementById('btn-first').addEventListener('click', first);
 document.getElementById('btn-prec').addEventListener('click', prec);
@@ -30,8 +34,10 @@ document.getElementById('btn-last').addEventListener('click', last);
 
 if(embed){
 	document.getElementById('form-hide').style.display = 'none';
+} else if(edit) {
+	document.getElementById('form').style.display = 'none';
+	document.getElementById('edit').style.display = 'block';
 } else {
-
 	document.getElementById('form').onkeydown = function (e) {
 		keysActive = false;
 	}
