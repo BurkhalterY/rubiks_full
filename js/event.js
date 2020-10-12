@@ -33,9 +33,9 @@ document.getElementById('btn-next').addEventListener('click', next);
 document.getElementById('btn-last').addEventListener('click', last);
 
 if(embed){
-	document.getElementById('form-hide').style.display = 'none';
+	document.getElementById('form-part-1').style.display = 'none';
 } else if(edit) {
-	document.getElementById('form').style.display = 'none';
+	document.getElementById('form-part-2').style.display = 'none';
 	document.getElementById('edit').style.display = 'block';
 } else {
 	document.getElementById('form').onkeydown = function (e) {

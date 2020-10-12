@@ -109,7 +109,9 @@ function updateAlgorithm(algo = null) {
 		}
 	}
 
-	document.getElementById('algorithm').innerHTML = algorithm.map((e, i) => e[2]).join(' ');
+	document.getElementById('algorithm').innerHTML = algorithm.map(e => e[2]).join(' ');
+	updateJSON();
+
 	algorithmIndex = 0;
 	algoReverse = false;
 }

@@ -12,13 +12,16 @@
 			canvas {
 				display: block;
 			}
-			#form, #edit {
+			#form {
 				position: absolute;
 				width: 100%;
 				bottom: 0;
 				right: 0;
 			}
 			#edit {
+				position: absolute;
+				bottom: 0;
+				right: 0;
 				text-align: right;
 			}
 			#edit img {
@@ -30,8 +33,8 @@
 				border-color: white;
 			}
 			#colors {
-				width: 250px;
-				height: 125px;
+				width: 300px;
+				height: 200px;
 			}
 			#algorithm {
 				background-color: white;
@@ -50,18 +53,20 @@
 	</head>
 	<body>
 		<div id="form">
-			<div id="form-hide">
+			<div id="form-part-1">
 				<input type="text" id="input">
 				<button id="btn-ok">O.K.</button>
 			</div>
-			<button id="btn-first">&laquo;</button>
-			<button id="btn-prec">&lt;</button>
-			<button id="btn-next">&gt;</button>
-			<button id="btn-last">&raquo;</button>
-			<pre id="algorithm"></pre>
+			<div id="form-part-2">
+				<button id="btn-first">&laquo;</button>
+				<button id="btn-prec">&lt;</button>
+				<button id="btn-next">&gt;</button>
+				<button id="btn-last">&raquo;</button>
+				<pre id="algorithm"></pre>
+			</div>
 		</div>
 		<div id="edit">
-			<textarea id="colors"></textarea><br>
+			<textarea id="colors" readonly></textarea><br>
 			<img id="color-w" class="selected" onclick="changeColor('w');" src="textures/w.png" />
 			<img id="color-r" onclick="changeColor('r');" src="textures/r.png" />
 			<img id="color-y" onclick="changeColor('y');" src="textures/y.png" />

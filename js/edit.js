@@ -2,7 +2,7 @@ var selectedColor = 'w';
 
 function initEdit() {
 
-	document.getElementById('colors').innerHTML = JSON.stringify(colors, null, '\t');
+	updateJSON();
 
 	document.body.onclick = function (e) {
 		e.preventDefault();
@@ -21,7 +21,7 @@ function initEdit() {
 
 			let colorIndex = getColorIndex(Math.floor(intersects[0].faceIndex/2), cube.position.x, cube.position.y, cube.position.z);
 			colors[colorIndex[0]] = colors[colorIndex[0]].replaceAt(colorIndex[1] + (colorIndex[4] - colorIndex[2] - 1) * colorIndex[3], selectedColor);
-			document.getElementById('colors').innerHTML = JSON.stringify(colors, null, '\t');
+			updateJSON();
 		}
 	}
 }
@@ -30,4 +30,9 @@ function changeColor(c) {
 	document.getElementById('color-'+selectedColor).classList.remove('selected');;
 	document.getElementById('color-'+c).classList.add('selected');;
 	selectedColor = c;
+}
+
+function updateJSON() {
+	let json = { colors: colors, algo: algorithm.map(e => e[2]).join(' ') };
+	document.getElementById('colors').innerHTML = JSON.stringify(json, null, '\t');
 }
