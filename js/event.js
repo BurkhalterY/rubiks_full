@@ -69,5 +69,5 @@ window.onresize = function () {
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	controls.handleResize();
+	//controls.handleResize();
 };
