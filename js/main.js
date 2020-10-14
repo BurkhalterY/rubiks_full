@@ -113,7 +113,7 @@ function updateAlgorithm(algo = null) {
 	updateJSON();
 
 	algorithmIndex = 0;
-	algoReverse = false;
+	algoReverse = -1;
 }
 
 function executeCode(reverse = 1) {
