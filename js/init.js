@@ -120,6 +120,7 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 	executeQueue();
+	renderer.setSize(window.innerWidth, window.innerHeight);
 	controls.update();
 	renderer.render(scene, camera);
 }
