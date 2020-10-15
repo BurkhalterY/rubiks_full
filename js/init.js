@@ -72,7 +72,9 @@ var shots = [];
 
 function init() {
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+	//camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+	let ratio = window.innerHeight / window.innerWidth;
+	camera = new THREE.OrthographicCamera(-longest*3, longest*3, longest*3 * ratio, -longest*3 * ratio, 1, 50);
 	let camPos = new THREE.Vector3(0.5, 0.5, 1);
 	camPos.normalize();
 	camPos.multiplyScalar(longest*3);
@@ -120,6 +122,14 @@ function init() {
 function animate() {
 	requestAnimationFrame(animate);
 	executeQueue();
+
+	let ratio = window.innerHeight / window.innerWidth;
+	camera.left = -longest*3;
+	camera.right = longest*3;
+	camera.top = longest*3 * ratio;
+	camera.bottom = -longest*3 * ratio;
+	camera.updateProjectionMatrix();
+
 	controls.update();
 	renderer.render(scene, camera);
 }
