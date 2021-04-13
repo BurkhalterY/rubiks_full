@@ -52,7 +52,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "U' R U R' U2 ( R U' R' )"
+		"algo": "( U' R U R' ) U2 ( R U' R' )"
 	},
 	"6": {
 		"colors": {
@@ -74,7 +74,7 @@
 			"L": "-r-------",
 			"D": "-w-www-w-"
 		},
-		"algo": "U' R U2' R' U2 ( R U' R' )"
+		"algo": "U' ( R U2' R' ) U2 ( R U' R' )"
 	},
 	"8": {
 		"colors": {
@@ -96,7 +96,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "U' R U' R' U ( F' U' F )"
+		"algo": "U' ( R U' R' U ) Y' ( R' U' R )"
 	},
 	"10": {
 		"colors": {
@@ -140,7 +140,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "d R' U R d' ( F' U' F )"
+		"algo": "Y' U ( R' U R U' ) ( R' U' R )"
 	},
 	"14": {
 		"colors": {
@@ -162,7 +162,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "Y L' U L U2 Y' ( R U R' )"
+		"algo": "Y' ( R' U R ) U2' Y ( R U R' )"
 	},
 	"16": {
 		"colors": {
@@ -360,7 +360,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "U' R U' R' U2 ( R U' R' )"
+		"algo": "( U' R U' R' ) U2 ( R U' R' )"
 	},
 	"34": {
 		"colors": {
@@ -382,7 +382,7 @@
 			"L": "---------",
 			"D": "-w-www-w-"
 		},
-		"algo": "U' R U R' U ( F' U' F )"
+		"algo": "( U' R U R' ) U Y' ( R' U' R )"
 	},
 	"36": {
 		"colors": {
