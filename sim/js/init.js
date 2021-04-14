@@ -65,8 +65,8 @@ function init() {
 	let canvas = document.getElementById("canvas");
 	
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
-	let camPos = new THREE.Vector3(-.1, .1, .25);
+	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+	let camPos = new THREE.Vector3(0.5, 0.5, 1);
 	camPos.normalize();
 	camPos.multiplyScalar(longest*3);
 	camera.position.copy(camPos);
