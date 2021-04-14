@@ -262,7 +262,7 @@ function getColor(face, x, y, z) {
 		color = colors[colorIndex[0]][colorIndex[1] + (colorIndex[4] - colorIndex[2] - 1) * colorIndex[3]];
 	}
 	if(urlParams.has('stickers')){
-		let material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./textures/'+urlParams.get('stickers')+'/'+color+'.png') });
+		let material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./res/'+urlParams.get('stickers')+'/'+color+'.png') });
 		material.map.repeat.set(1/colorIndex[3], 1/colorIndex[4]);
 		material.map.offset.set(colorIndex[1]/colorIndex[3], colorIndex[2]/colorIndex[4]);
 		return material;

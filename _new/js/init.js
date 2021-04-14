@@ -22,14 +22,14 @@ const type = urlParams.has('type') ? urlParams.get('type') : 'cube';
 
 const loader = new THREE.TextureLoader();
 const materialsColors = {
-	'w': new THREE.MeshBasicMaterial({map: loader.load('./textures/w.png')}),
-	'r': new THREE.MeshBasicMaterial({map: loader.load('./textures/r.png')}),
-	'y': new THREE.MeshBasicMaterial({map: loader.load('./textures/y.png')}),
-	'o': new THREE.MeshBasicMaterial({map: loader.load('./textures/o.png')}),
-	'g': new THREE.MeshBasicMaterial({map: loader.load('./textures/g.png')}),
-	'b': new THREE.MeshBasicMaterial({map: loader.load('./textures/b.png')}),
-	'_': new THREE.MeshBasicMaterial({map: loader.load('./textures/_.png')}),
-	'-': new THREE.MeshBasicMaterial({map: loader.load('./textures/-.png')})
+	'w': new THREE.MeshBasicMaterial({map: loader.load('./res/w.png')}),
+	'r': new THREE.MeshBasicMaterial({map: loader.load('./res/r.png')}),
+	'y': new THREE.MeshBasicMaterial({map: loader.load('./res/y.png')}),
+	'o': new THREE.MeshBasicMaterial({map: loader.load('./res/o.png')}),
+	'g': new THREE.MeshBasicMaterial({map: loader.load('./res/g.png')}),
+	'b': new THREE.MeshBasicMaterial({map: loader.load('./res/b.png')}),
+	'_': new THREE.MeshBasicMaterial({map: loader.load('./res/_.png')}),
+	'-': new THREE.MeshBasicMaterial({map: loader.load('./res/-.png')})
 };
 
 var colors = {
