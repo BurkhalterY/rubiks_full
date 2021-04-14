@@ -4,7 +4,7 @@
 		<title>Rubik'S</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
-		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+		<script src="lib/jquery-3.6.0.min.js"></script>
 		<style>
 			body {
 				margin: 0;
@@ -33,7 +33,7 @@
 				border-color: white;
 			}
 			#colors {
-				width: 300px;
+				width: 400px;
 				height: 200px;
 			}
 			#algorithm {
@@ -52,6 +52,7 @@
 		</style>
 	</head>
 	<body>
+		<canvas id="canvas"></canvas>
 		<div id="form">
 			<div id="form-part-1">
 				<input type="text" id="input">
@@ -75,8 +76,8 @@
 			<img id="color-b" onclick="changeColor('b');" src="textures/b.png" />
 			<img id="color--" onclick="changeColor('-');" src="textures/-.png" />
 		</div>
-		<script src="three.js-master/build/three.min.js"></script>
-		<script src="three.js-master/examples/js/controls/OrbitControls.js"></script>
+		<script src="lib/three.min.js"></script>
+		<script src="lib/OrbitControls.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/main.js"></script>
 		<script src="js/event.js"></script>

@@ -4,7 +4,7 @@ function press(code, direction, reverse = 1) {
 			case 1:
 				shots = [];
 				if(Object.values(keys).length > 0){
-					for (let i = 0; i < 40; i++) {
+					for (let i = 0; i < 20; i++) {
 						addToQueue(Object.values(keys).sample(), [1, -1, 2].sample(), false);
 					}
 				}
@@ -51,13 +51,13 @@ function executeQueue() {
 					document.getElementById('algorithm').innerHTML = algorithm.map((e, i) => i == singleAction.algoIndex ? '<span id="current">'+e[2]+'</span>' : e[2]).join(' ');
 				}
 
-				for(let cube of cubes) {
-					for(let authorizedCube of singleAction.zone.cubes) {
-						let worldPosition = new THREE.Vector3();
-						cube.getWorldPosition(worldPosition);
-						if(worldPosition.distanceTo(authorizedCube) < 1e-10){
-							group.attach(cube);
-						}
+				for (let cube of cubes) {
+
+					firstBB = new THREE.Box3().setFromObject(singleAction.zone.zone);
+					secondBB = new THREE.Box3().setFromObject(cube);
+
+					if(collision = firstBB.intersectsBox(secondBB)){
+						group.attach(cube);
 					}
 				}
 			}

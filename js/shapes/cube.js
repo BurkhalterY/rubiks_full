@@ -11,7 +11,9 @@ function generateCubeZones() {
 	let zCoords = [];
 
 	for (let x = min.x; x <= max.x; x++) {
-		let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(width - 1, width - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		zone.zone.position.x = x;
+		zone.zone.rotation.y = Math.PI / 2;
 
 		let key = toNotation(x, min.x, max.x, 'R', 'L', 'M');
 		xCoords.push([x, zone]);
@@ -62,7 +64,9 @@ function generateCubeZones() {
 	let uwZones = [];
 	let dwZones = [];
 	for (let y = min.y; y <= max.y; y++) {
-		let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(height - 1, height - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		zone.zone.position.y = y;
+		zone.zone.rotation.x = Math.PI / 2;
 
 		let key = toNotation(y, min.y, max.y, 'U', 'D', 'E');
 		yCoords.push([y, zone]);
@@ -110,7 +114,8 @@ function generateCubeZones() {
 		}
 	}
 	for (let z = min.z; z <= max.z; z++) {
-		let zone = { cubes: [], center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(depth - 1, depth - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		zone.zone.position.z = z;
 
 		let key = toNotation(z, min.z, max.z, 'F', 'B', 'S');
 		zCoords.push([z, zone]);
@@ -158,7 +163,7 @@ function generateCubeZones() {
 		}
 	}
 
-	for (let x = -maxLongest; x <= maxLongest; x++) {
+	/*for (let x = -maxLongest; x <= maxLongest; x++) {
 		for (let y = -maxLongest; y <= maxLongest; y++) {
 			for (let z = -maxLongest; z <= maxLongest; z++) {
 				for(let j = 0; j < xCoords.length; j++){
@@ -178,7 +183,7 @@ function generateCubeZones() {
 				}
 			}
 		}
-	}
+	}*/
 }
 
 function generateCubeCubies() {
