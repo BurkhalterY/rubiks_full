@@ -1,0 +1,46 @@
+{
+	"edges_clockwise": {
+		"colors": {
+			"U": "yyyyyyyyy",
+			"F": "-b-bbbbbb",
+			"R": "-o-rrrrrr",
+			"B": "-r-gggggg",
+			"L": "-g-oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "( L' U' L U ) ( R U R' U' ) ( U' L' U L ) ( U R U' R' )"
+	},
+	"edges_anticlockwise": {
+		"colors": {
+			"U": "yyyyyyyyy",
+			"F": "-b-bbbbbb",
+			"R": "-g-rrrrrr",
+			"B": "-o-gggggg",
+			"L": "-r-oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "( R U R' U' ) ( L' U' L U ) ( U R U' R' ) ( U' L' U L )"
+	},
+	"corners_clockwise": {
+		"colors": {
+			"U": "yyyyyyyyy",
+			"F": "bbgbbbbbb",
+			"R": "orbrrrrrr",
+			"B": "rgrgggggg",
+			"L": "goooooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "X ( R' U R' D2 ) ( R U' R' D2 ) R2"
+	},
+	"corners_anticlockwise": {
+		"colors": {
+			"U": "yyyyyyyyy",
+			"F": "bbrbbbbbb",
+			"R": "grgrrrrrr",
+			"B": "ogbgggggg",
+			"L": "roooooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "X ( R2 D2 ) ( R U R' D2 ) ( R U' R )"
+	}
+}

@@ -1,0 +1,79 @@
+{
+	"sune": {
+		"colors": {
+			"U": "-y-yyyyy-",
+			"F": "--ybbbbbb",
+			"R": "--yrrrrrr",
+			"B": "--ygggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "R U R' U R U2 R'"
+	},
+	"antisune": {
+		"colors": {
+			"U": "-yyyyy-y-",
+			"F": "y--bbbbbb",
+			"R": "y--rrrrrr",
+			"B": "---gggggg",
+			"L": "y--oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "R U2 R' U' R U' R'"
+	},
+	"u": {
+		"colors": {
+			"U": "yyyyyy-y-",
+			"F": "y-ybbbbbb",
+			"R": "---rrrrrr",
+			"B": "---gggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "R2 D R' U2 R D' R' U2 R'"
+	},
+	"t": {
+		"colors": {
+			"U": "yyyyyy-y-",
+			"F": "---bbbbbb",
+			"R": "y--rrrrrr",
+			"B": "---gggggg",
+			"L": "--yoooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "X' R U R' D R U' R' D'"
+	},
+	"l": {
+		"colors": {
+			"U": "-yyyyyyy-",
+			"F": "---bbbbbb",
+			"R": "y--rrrrrr",
+			"B": "--ygggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "X' R U' R' D R U R' D'"
+	},
+	"h": {
+		"colors": {
+			"U": "-y-yyy-y-",
+			"F": "y-ybbbbbb",
+			"R": "---rrrrrr",
+			"B": "y-ygggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "F ( R U R' U' ) ( R U R' U' ) ( R U R' U' ) F'"
+	},
+	"pi": {
+		"colors": {
+			"U": "-y-yyy-y-",
+			"F": "--ybbbbbb",
+			"R": "---rrrrrr",
+			"B": "y--gggggg",
+			"L": "y-yoooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": "R U2 R2 U' R2 U' R2 U2 R"
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"oll": {
+		"colors": {
+			"U": "----y----",
+			"F": "---bbbbbb",
+			"R": "---rrrrrr",
+			"B": "---gggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": ""
+	},
+	"pll": {
+		"colors": {
+			"U": "yyyyyyyyy",
+			"F": "---bbbbbb",
+			"R": "---rrrrrr",
+			"B": "---gggggg",
+			"L": "---oooooo",
+			"D": "wwwwwwwww"
+		},
+		"algo": ""
+	}
+}

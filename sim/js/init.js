@@ -44,7 +44,7 @@ var colors = {
 const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
 
-const speed = 8;
+const speed = urlParams.has('speed') ? urlParams.get('speed') : 8;
 
 var scene, camera, renderer, controls;
 
