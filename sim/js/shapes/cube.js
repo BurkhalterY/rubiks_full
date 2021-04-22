@@ -4,19 +4,17 @@ function generateCubeZones() {
 	keys.Y = { zones: [], axis: axis.up };
 	keys.Z = { zones: [], axis: axis.front };
 
-	let maxLongest = (longest-1)/2;
-
-	let xCoords = [];
-	let yCoords = [];
-	let zCoords = [];
-
 	for (let x = min.x; x <= max.x; x++) {
-		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(width - 1, width - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = {
+			zone: new THREE.Mesh(new THREE.PlaneGeometry(depth - 1, height - 1), new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true })),
+			center: new THREE.Vector3(),
+			angle: Math.PI/2*(depth == height ? 1 : 2)
+		};
+		scene.add(zone.zone);
 		zone.zone.position.x = x;
 		zone.zone.rotation.y = Math.PI / 2;
 
 		let key = toNotation(x, min.x, max.x, 'R', 'L', 'M');
-		xCoords.push([x, zone]);
 		keys[key] = { zones: [zone], axis: key.startsWith('R') ? axis.right : axis.left };
 		keys.X.zones.push(zone);
 
@@ -60,16 +58,18 @@ function generateCubeZones() {
 			}
 		}
 	}
-
-	let uwZones = [];
-	let dwZones = [];
+	
 	for (let y = min.y; y <= max.y; y++) {
-		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(height - 1, height - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = {
+			zone: new THREE.Mesh(new THREE.PlaneGeometry(width - 1, depth - 1), new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true })),
+			center: new THREE.Vector3(),
+			angle: Math.PI/2*(width == depth ? 1 : 2)
+		};
+		scene.add(zone.zone);
 		zone.zone.position.y = y;
 		zone.zone.rotation.x = Math.PI / 2;
 
 		let key = toNotation(y, min.y, max.y, 'U', 'D', 'E');
-		yCoords.push([y, zone]);
 		keys[key] = { zones: [zone], axis: key.startsWith('U') ? axis.up : axis.down };
 		keys.Y.zones.push(zone);
 
@@ -113,12 +113,17 @@ function generateCubeZones() {
 			}
 		}
 	}
+
 	for (let z = min.z; z <= max.z; z++) {
-		let zone = { zone: new THREE.Mesh(new THREE.PlaneGeometry(depth - 1, depth - 1), new THREE.MeshBasicMaterial( { side: THREE.DoubleSide} )), center: new THREE.Vector3(), angle: Math.PI/2 };
+		let zone = {
+			zone: new THREE.Mesh(new THREE.PlaneGeometry(width - 1, height - 1), new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true })),
+			center: new THREE.Vector3(),
+			angle: Math.PI/2*(width == height ? 1 : 2)
+		};
+		scene.add(zone.zone);
 		zone.zone.position.z = z;
 
 		let key = toNotation(z, min.z, max.z, 'F', 'B', 'S');
-		zCoords.push([z, zone]);
 		keys[key] = { zones: [zone], axis: key.startsWith('B') ? axis.back : axis.front };
 		keys.Z.zones.push(zone);
 
@@ -162,28 +167,6 @@ function generateCubeZones() {
 			}
 		}
 	}
-
-	/*for (let x = -maxLongest; x <= maxLongest; x++) {
-		for (let y = -maxLongest; y <= maxLongest; y++) {
-			for (let z = -maxLongest; z <= maxLongest; z++) {
-				for(let j = 0; j < xCoords.length; j++){
-					if(xCoords[j][0] == x) {
-						xCoords[j][1].cubes.push(new THREE.Vector3(x, y, z));
-					}
-				}
-				for(let j = 0; j < yCoords.length; j++){
-					if(yCoords[j][0] == y) {
-						yCoords[j][1].cubes.push(new THREE.Vector3(x, y, z));
-					}
-				}
-				for(let j = 0; j < zCoords.length; j++){
-					if(zCoords[j][0] == z) {
-						zCoords[j][1].cubes.push(new THREE.Vector3(x, y, z));
-					}
-				}
-			}
-		}
-	}*/
 }
 
 function generateCubeCubies() {
@@ -207,6 +190,16 @@ function generateCubeCubies() {
 				}
 			}
 		}
+	}
+}
+
+function toNotation(coord, min, max, charR, charL, charM) {
+	if(coord > 0){
+		return charR + toIndice(-min-coord+1);
+	} else if(coord < 0){
+		return charL + toIndice(max+coord+1);
+	} else {
+		return charM;
 	}
 }
 

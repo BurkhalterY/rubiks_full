@@ -16,18 +16,19 @@ const width = urlParams.has('width') ? urlParams.get('width') : 3;
 const height = urlParams.has('height') ? urlParams.get('height') : width;
 const depth = urlParams.has('depth') ? urlParams.get('depth') : width;
 const longest = Math.max(width, height, depth);
+const shortest = Math.min(width, height, depth);
 const type = urlParams.has('type') ? urlParams.get('type') : 'cube';
 
 const loader = new THREE.TextureLoader();
 const materialsColors = {
-	'w': new THREE.MeshBasicMaterial({map: loader.load('./res/w.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'r': new THREE.MeshBasicMaterial({map: loader.load('./res/r.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'y': new THREE.MeshBasicMaterial({map: loader.load('./res/y.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'o': new THREE.MeshBasicMaterial({map: loader.load('./res/o.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'g': new THREE.MeshBasicMaterial({map: loader.load('./res/g.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'b': new THREE.MeshBasicMaterial({map: loader.load('./res/b.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'_': new THREE.MeshBasicMaterial({map: loader.load('./res/_.png'), transparent: debug, opacity: debug ? .2 : 0 }),
-	'-': new THREE.MeshBasicMaterial({map: loader.load('./res/-.png'), transparent: debug, opacity: debug ? .2 : 0 })
+	'w': new THREE.MeshBasicMaterial({map: loader.load('./res/w.png'), transparent: debug, opacity: .25 }),
+	'r': new THREE.MeshBasicMaterial({map: loader.load('./res/r.png'), transparent: debug, opacity: .25 }),
+	'y': new THREE.MeshBasicMaterial({map: loader.load('./res/y.png'), transparent: debug, opacity: .25 }),
+	'o': new THREE.MeshBasicMaterial({map: loader.load('./res/o.png'), transparent: debug, opacity: .25 }),
+	'g': new THREE.MeshBasicMaterial({map: loader.load('./res/g.png'), transparent: debug, opacity: .25 }),
+	'b': new THREE.MeshBasicMaterial({map: loader.load('./res/b.png'), transparent: debug, opacity: .25 }),
+	'_': new THREE.MeshBasicMaterial({map: loader.load('./res/_.png'), transparent: debug, opacity: .25 }),
+	'-': new THREE.MeshBasicMaterial({map: loader.load('./res/-.png'), transparent: debug, opacity: .25 })
 };
 
 var colors = {
@@ -39,8 +40,8 @@ var colors = {
 	'D': 'y'.repeat(width*depth)
 };
 
-const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
-const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
+const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2, srt: -(shortest-1)/2, lng: -(longest-1)/2 };
+const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2, srt: (shortest-1)/2, lng: (longest-1)/2 };
 
 var speed = urlParams.has('speed') ? urlParams.get('speed') : document.getElementById("speed").value;
 
@@ -81,6 +82,9 @@ function init() {
 		case 'cube':
 			generateCubeZones();
 			break;
+		case 'pyraminx':
+			generatePyraminxZones();
+			break;
 	}
 
 	if(urlParams.has('config')){
@@ -99,6 +103,9 @@ function init() {
 	switch(type) {
 		case 'cube':
 			generateCubeCubies();
+			break;
+		case 'pyraminx':
+			generatePyraminxCubies();
 			break;
 	}
 

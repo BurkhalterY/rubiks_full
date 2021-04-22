@@ -61,6 +61,7 @@ function executeQueue() {
 						group.attach(cube);
 					}
 				}
+				group.attach(singleAction.zone.zone);
 			}
 
 			group.rotateOnAxis(singleAction.axis, singleAction.zone.angle / speed * singleAction.direction);
@@ -134,16 +135,6 @@ function executeCode(reverse = 1) {
 		} else {
 			addToQueue(keys[algorithm[algorithmIndex][0]], algorithm[algorithmIndex][1] * reverse, false, algorithmIndex);
 		}
-	}
-}
-
-function toNotation(coord, min, max, charR, charL, charM) {
-	if(coord > 0){
-		return charR + toIndice(-min-coord+1);
-	} else if(coord < 0){
-		return charL + toIndice(max+coord+1);
-	} else {
-		return charM;
 	}
 }
 
