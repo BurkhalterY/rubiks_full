@@ -38,6 +38,7 @@ function addToQueue(key, direction, save = true, algoIndex = null) {
 
 function executeQueue() {
 	if(queue.length > 0){
+		document.getElementById('speed').disabled = true;
 		let finish = false;
 		let action = queue[queue.length-1];
 		for(let singleAction of action) {
@@ -71,9 +72,11 @@ function executeQueue() {
 					let worldRotation = new THREE.Quaternion();
 					children.getWorldQuaternion(worldRotation);
 					children.parent = null;
+					scene.add(children);
 					children.position.copy(worldPosition);
 					children.quaternion.copy(worldRotation);
 				}
+				scene.remove(group);
 				finish = true;
 			}
 		}
@@ -81,6 +84,8 @@ function executeQueue() {
 		if(finish){
 			queue.pop();
 		}
+	} else {
+		document.getElementById('speed').disabled = false;
 	}
 }
 

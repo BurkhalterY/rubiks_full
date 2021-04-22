@@ -18,6 +18,10 @@ function last() {
 	}
 }
 
+function changeSpeed() {
+	speed = document.getElementById('speed').value;
+}
+
 Array.prototype.sample = function(){
 	return this[Math.floor(Math.random() * this.length)];
 }
@@ -31,6 +35,7 @@ document.getElementById('btn-first').addEventListener('click', first);
 document.getElementById('btn-prec').addEventListener('click', prec);
 document.getElementById('btn-next').addEventListener('click', next);
 document.getElementById('btn-last').addEventListener('click', last);
+document.getElementById('speed').addEventListener('change', changeSpeed);
 
 if(embed){
 	document.getElementById('form-part-1').style.display = 'none';

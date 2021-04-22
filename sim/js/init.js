@@ -7,10 +7,8 @@ const axis = {
 	back: new THREE.Vector3(0, 0, 1)
 };
 
-const mat = new THREE.MeshBasicMaterial({ vertexColors: true });
-const transparentMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
-
 const urlParams = new URLSearchParams(window.location.search);
+const debug = urlParams.has('debug');
 const embed = urlParams.has('embed');
 const edit = urlParams.has('edit');
 
@@ -22,14 +20,14 @@ const type = urlParams.has('type') ? urlParams.get('type') : 'cube';
 
 const loader = new THREE.TextureLoader();
 const materialsColors = {
-	'w': new THREE.MeshBasicMaterial({map: loader.load('./res/w.png')}),
-	'r': new THREE.MeshBasicMaterial({map: loader.load('./res/r.png')}),
-	'y': new THREE.MeshBasicMaterial({map: loader.load('./res/y.png')}),
-	'o': new THREE.MeshBasicMaterial({map: loader.load('./res/o.png')}),
-	'g': new THREE.MeshBasicMaterial({map: loader.load('./res/g.png')}),
-	'b': new THREE.MeshBasicMaterial({map: loader.load('./res/b.png')}),
-	'_': new THREE.MeshBasicMaterial({map: loader.load('./res/_.png')}),
-	'-': new THREE.MeshBasicMaterial({map: loader.load('./res/-.png')})
+	'w': new THREE.MeshBasicMaterial({map: loader.load('./res/w.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'r': new THREE.MeshBasicMaterial({map: loader.load('./res/r.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'y': new THREE.MeshBasicMaterial({map: loader.load('./res/y.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'o': new THREE.MeshBasicMaterial({map: loader.load('./res/o.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'g': new THREE.MeshBasicMaterial({map: loader.load('./res/g.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'b': new THREE.MeshBasicMaterial({map: loader.load('./res/b.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'_': new THREE.MeshBasicMaterial({map: loader.load('./res/_.png'), transparent: debug, opacity: debug ? .2 : 0 }),
+	'-': new THREE.MeshBasicMaterial({map: loader.load('./res/-.png'), transparent: debug, opacity: debug ? .2 : 0 })
 };
 
 var colors = {
@@ -44,7 +42,7 @@ var colors = {
 const min = { x: -(width-1)/2, y: -(height-1)/2, z: -(depth-1)/2 };
 const max = { x: (width-1)/2, y: (height-1)/2, z: (depth-1)/2 };
 
-const speed = urlParams.has('speed') ? urlParams.get('speed') : 8;
+var speed = urlParams.has('speed') ? urlParams.get('speed') : document.getElementById("speed").value;
 
 var scene, camera, renderer, controls;
 
